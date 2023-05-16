@@ -1,5 +1,5 @@
 const express = require("express");
-const { MongoClient, ObjectId } = require("mongodb");
+const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 require("colors");
 const cors = require("cors");
 
@@ -8,9 +8,17 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-const uri = "mongodb://localhost:27017";
-
-const client = new MongoClient(uri);
+const uri =
+  "mongodb+srv://testandpractice:kUFDtuIZZsxe62hu@cluster0.t90v0gz.mongodb.net/?retryWrites=true&w=majority";
+console.log(uri);
+// Create a MongoClient with a MongoClientOptions object to set the Stable API version
+const client = new MongoClient(uri, {
+  serverApi: {
+    version: ServerApiVersion.v1,
+    strict: true,
+    deprecationErrors: true,
+  },
+});
 
 async function dbConnect() {
   try {
@@ -123,7 +131,10 @@ app.patch("/product/:id", async (req, res) => {
   const { id } = req.params;
 
   try {
-    const result = await Product.updateOne({ _id: ObjectId(id) }, { $set: req.body });
+    const result = await Product.updateOne(
+      { _id: ObjectId(id) },
+      { $set: req.body }
+    );
 
     if (result.matchedCount) {
       res.send({
